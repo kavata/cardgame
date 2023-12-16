@@ -1,0 +1,95 @@
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.App {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 400px;
+}
+
+.message {
+  padding: 10px;
+  background-color: #3498db;
+  color: #fff;
+  text-align: center;
+}
+
+/* Styles for Login component */
+.Login {
+  padding: 20px;
+}
+
+.Login input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.Login button {
+  width: 100%;
+  padding: 10px;
+  background-color: #2ecc71;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+/* Styles for Registration component */
+.Registration {
+  padding: 20px;
+}
+
+.Registration input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.Registration button {
+  width: 100%;
+  padding: 10px;
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+/* Styles for GameSelection component */
+.GameSelection {
+  padding: 20px;
+}
+
+.GameSelection button {
+  width: 100%;
+  padding: 10px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+/* Styles for GameScreen component */
+.GameScreen {
+  padding: 20px;
+}
+
+/* Separate the Login and Registration sections visually */
+.LoginSection {
+  border-bottom: 1px solid #ccc;
+}
+
+.RegistrationSection {
+  padding-top: 20px;
+}
+
+/* Add more styles as needed for your specific components */
