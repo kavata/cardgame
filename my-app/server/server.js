@@ -78,7 +78,7 @@ function getUserByUsername(username) {
 
 // Exemple de configuration dans server.js
 const gameRoutes = require('./routes/gameRoutes');
-app.use('/games', gameRoutes); // Assurez-vous que le chemin correspond à celui que vous utilisez dans le fetch
+app.use('/jeux', gameRoutes); // Assurez-vous que le chemin correspond à celui que vous utilisez dans le fetch
 
 app.listen(port, () => {
     console.log(`Serveur démarré sur http://localhost:${port}`);

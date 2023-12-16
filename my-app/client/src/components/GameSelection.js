@@ -8,7 +8,7 @@ function GameSelection({ onGameSelected }) {
     // Effet de chargement des jeux au montage du composant
     useEffect(() => {
         // Fetch pour récupérer la liste des jeux depuis le serveur
-        fetch('http://localhost:3001/games')
+        fetch('http://localhost:3001/jeux')
             .then(response => response.json())
             .then(setGames)
            .catch(error => console.error('Erreur lors du chargement des jeux :', error));
@@ -46,7 +46,7 @@ function GameSelection({ onGameSelected }) {
             // telles que l'ID de l'utilisateur qui crée la partie, le type de jeu, etc.
         };
         console.log("newGameInfo", newGameInfo);
-        fetch('http://localhost:3001/games', {
+        fetch('http://localhost:3001/jeux', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -68,16 +68,19 @@ function GameSelection({ onGameSelected }) {
         });
     };
     
-
+     /*   {games.map(game => (
+                    <option key={game.id} value={game.id}>{game.name}</option>
+                ))}
+            </select>*/
     return (
         <div>
             {/* Sélecteur de jeux existants */}
             <select value={selectedGameId} onChange={handleGameSelect}>
                 <option value="">Sélectionnez un jeu</option>
-                {games.map(game => (
-                    <option key={game.id} value={game.id}>{game.name}</option>
-                ))}
-            </select>
+                {games.map(jeu => (
+        <option key={jeu.id} value={jeu.id}>{jeu.name}</option> // Utilisez game.jeu ou l'attribut approprié
+    ))}
+</select>
 
             {/* Sélecteur pour le nombre de joueurs */}
             <label>

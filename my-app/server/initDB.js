@@ -16,7 +16,6 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS games (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      jeu TEXT NOT NULL,
       name TEXT NOT NULL,
       creator_id INTEGER,
       numberOfPlayers INTEGER,
@@ -36,15 +35,30 @@ db.serialize(() => {
     );
   `);
 
-   db.run(`
-   INSERT INTO games (name, creator_id, status) VALUES 
-       ('Jeu de Cartes 1', 1, 'en attente');
- `);
+    // création de la tabe des jeux
+  db.run(`
+  CREATE TABLE IF NOT EXISTS jeux (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL
+  );
+  `);
+
+  db.run(`
+  INSERT INTO jeux (id, name) VALUES (1, 'bataille ouverte multi-joueurs');
+  `);
+  db.run(`
+  INSERT INTO jeux  (id, name) VALUES (2, 'UNO');
+  `);
+  db.run(`
+  INSERT INTO jeux (id, name) VALUES (3, 'TEST');
+  `);
 //       ('Jeu de Cartes 2', 1, 'en attente'),
 //       ('Jeu de Cartes 3', 1, 'en attente');
 
   // Ajoutez ici d'autres tables nécessaires pour votre jeu
 
 });
+
+
 
 db.close();
