@@ -23,4 +23,24 @@ router.get('/', (req, res) => {
     });
 });
 
+
+// Route pour créer une nouvelle partie
+router.post('/', (req, res) => {
+    const { name, numberOfPlayers } = req.body; // Adaptez ces champs à votre requête
+    console.log("name, nb of players", req.body);
+
+    // Ici, ajoutez la logique pour insérer une nouvelle partie dans votre base de données
+    const query = `INSERT INTO games (name, numberOfPlayers, status) VALUES (?,?,'en attente')`;
+    db.run(query, [name, numberOfPlayers], function(err) {
+        if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        // Renvoyer l'ID de la nouvelle partie créée
+        res.status(201).json({ message: "Nouvelle partie créée", gameId: this.lastID });
+    });
+});
+
+
 module.exports = router;

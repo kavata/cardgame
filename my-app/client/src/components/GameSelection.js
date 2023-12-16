@@ -12,15 +12,15 @@ function GameSelection({ onGameSelected }) {
             .then(response => response.json())
             .then(setGames)
            .catch(error => console.error('Erreur lors du chargement des jeux :', error));
-        //    fetch('http://localhost:3001/games')
-        //    .then(response => {
-        //        if (!response.ok) {
-        //            throw new Error('Network response was not ok');
-        //        }
-        //        return response.json();
-        //    })
-        //    // ...
-       
+       /*     fetch('http://localhost:3001/games')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+           // ...
+       */
         }, []);
 
     // Gestionnaire d'événement pour la sélection d'un jeu existant
@@ -31,6 +31,7 @@ function GameSelection({ onGameSelected }) {
     // Gestionnaire d'événement pour le changement du nombre de joueurs
     const handleNumberOfPlayersChange = (e) => {
         const value = parseInt(e.target.value, 10);
+        console.log("value",value);
         // Assurez-vous que la valeur est comprise entre 2 et 10
         const clampedValue = Math.min(10, Math.max(2, value));
         setNumberOfPlayers(clampedValue);
@@ -38,14 +39,13 @@ function GameSelection({ onGameSelected }) {
 
     // Gestionnaire d'événement pour la création d'une nouvelle partie
     const handleCreateGame = () => {
-        // Données nécessaires pour créer une nouvelle partie
         const newGameInfo = {
-            name: 'Nouvelle Partie',
-            numberOfPlayers: numberOfPlayers,
-            // Autres propriétés nécessaires pour créer une partie...
+            name: 'Nouvelle Partie',            // Nom de la partie, peut être dynamique
+            numberOfPlayers: numberOfPlayers,   // Nombre de joueurs sélectionné
+            // Vous pouvez ajouter d'autres informations nécessaires pour créer une partie,
+            // telles que l'ID de l'utilisateur qui crée la partie, le type de jeu, etc.
         };
-
-        // Requête POST pour créer une nouvelle partie
+        console.log("newGameInfo", newGameInfo);
         fetch('http://localhost:3001/games', {
             method: 'POST',
             headers: {
@@ -53,16 +53,21 @@ function GameSelection({ onGameSelected }) {
             },
             body: JSON.stringify(newGameInfo),
         })
-        .then(response => response.json())
-        .then(newGame => {
-            // La nouvelle partie créée est renvoyée par le serveur
-            console.log('Nouvelle partie créée :', newGame);
-            
-            // Appel de la fonction de rappel pour mettre à jour l'état global avec la nouvelle partie
-            onGameSelected(newGame);
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Échec de la création de la partie');
+            }
+            return response.json();
         })
-        .catch(error => console.error('Erreur lors de la création de la partie :', error));
+        .then(newGame => {
+            console.log('Nouvelle partie créée :', newGame);
+            onGameSelected(newGame.id); // Assurez-vous que cette fonction fait ce que vous attendez
+        })
+        .catch(error => {
+            console.error('Erreur lors de la création de la partie :', error);
+        });
     };
+    
 
     return (
         <div>

@@ -80,7 +80,6 @@ function getUserByUsername(username) {
 const gameRoutes = require('./routes/gameRoutes');
 app.use('/games', gameRoutes); // Assurez-vous que le chemin correspond à celui que vous utilisez dans le fetch
 
-
 app.listen(port, () => {
     console.log(`Serveur démarré sur http://localhost:${port}`);
 });

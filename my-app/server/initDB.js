@@ -16,8 +16,10 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS games (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      jeu TEXT NOT NULL,
       name TEXT NOT NULL,
       creator_id INTEGER,
+      numberOfPlayers INTEGER,
       status TEXT,
       FOREIGN KEY (creator_id) REFERENCES users (id)
     );
@@ -33,13 +35,13 @@ db.serialize(() => {
       FOREIGN KEY (user_id) REFERENCES users (id)
     );
   `);
-  
-  db.run(`
-  INSERT INTO games (name, creator_id, status) VALUES 
-      ('Jeu de Cartes 1', 1, 'en attente'),
-      ('Jeu de Cartes 2', 1, 'en attente'),
-      ('Jeu de Cartes 3', 1, 'en attente');
-`);
+
+   db.run(`
+   INSERT INTO games (name, creator_id, status) VALUES 
+       ('Jeu de Cartes 1', 1, 'en attente');
+ `);
+//       ('Jeu de Cartes 2', 1, 'en attente'),
+//       ('Jeu de Cartes 3', 1, 'en attente');
 
   // Ajoutez ici d'autres tables nécessaires pour votre jeu
 
