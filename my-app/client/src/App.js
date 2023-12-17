@@ -41,6 +41,11 @@ function App() {
     setSelectedGameId(gameId);
     setCurrentScreen('waitingRoom'); // Supposons que vous ayez un écran de salle d'attente
     setMessage(`Jeu sélectionné : ${gameId}`);
+    console.log('Game selected with ID:', gameId); // Dans handleGameSelected
+
+// Et au début du composant WaitingRoom
+console.log('WaitingRoom loaded with gameId:', gameId);
+
   };
 
   const handleLogout = () => {

@@ -20,7 +20,7 @@ db.serialize(() => {
       creator_id INTEGER,
       numberOfPlayers INTEGER,
       status TEXT,
-      gameCode TEXT,
+      gameCode TEXT UNIQUE,
       FOREIGN KEY (creator_id) REFERENCES users (id)
     );
   `);

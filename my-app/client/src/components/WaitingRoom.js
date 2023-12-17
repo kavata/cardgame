@@ -1,42 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
 
-function WaitingRoom({ gameId }) {
+function WaitingRoom({ gameId, onStartGame }) {
     const [participants, setParticipants] = useState([]);
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        // Remplacer par l'URL de votre API pour obtenir les participants
-        fetch(`http://localhost:3001/games/${gameId}/participants`)
-            .then(response => response.json())
-            .then(data => setParticipants(data))
-            .catch(error => console.error('Erreur lors du chargement des participants:', error));
+        // Vérifier si gameId est défini
+        if (gameId) {
+            fetch(`http://localhost:3001/games/${gameId}/participants`)
+                .then(response => {
+                    // Vérifier si la réponse est OK
+                    if (!response.ok) {
+                        throw new Error('La réponse du serveur n\'est pas OK');
+                    }
+                    return response.json();
+                })
+                .then(data => setParticipants(data))
+                .catch(error => {
+                    console.error('Erreur lors du chargement des participants:', error);
+                    setError('Erreur lors du chargement des participants');
+                });
+        } else {
+            setError('ID de partie non défini');
+        }
     }, [gameId]);
 
-    const handleStartGame = () => {
-        // Envoie une requête pour démarrer le jeu
-        // Remplacer par l'URL de votre API pour démarrer la partie
-        fetch(`http://localhost:3001/games/${gameId}/start`, { method: 'POST' })
-            .then(response => {
-                if (response.ok) {
-                    // Gérer le démarrage réussi du jeu ici
-                }
-            })
-            .catch(error => console.error('Erreur lors du démarrage du jeu:', error));
-    };
-       
     return (
         <div>
             <h2>Salle d'attente pour la partie {gameId}</h2>
+            {error && <p>Erreur : {error}</p>}
             <ul>
                 {participants.map(participant => (
                     <li key={participant.id}>{participant.name}</li>
                 ))}
             </ul>
-            <button onClick={handleStartGame}>Commencer le Jeu</button>
+            <button onClick={onStartGame}>Commencer le Jeu</button>
         </div>
     );
-
-    
 }
 
 export default WaitingRoom;
