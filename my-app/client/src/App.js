@@ -37,11 +37,11 @@ function App() {
     setMessage(`Erreur d'inscription : ${errorMsg}`);
   };
 
-  const handleGameSelected = (gameId) => {
+  const handleGameSelected = (gameId, gameName) => {
     setSelectedGameId(gameId);
     setCurrentScreen('waitingRoom'); // Supposons que vous ayez un écran de salle d'attente
-    setMessage(`Jeu sélectionné : ${gameId}`);
-    console.log('Game selected with ID:', gameId); // Dans handleGameSelected
+    setMessage(`Jeu sélectionné : ${gameName}`);
+    console.log('Game selected with ID:', gameId, 'and Name:', gameName);
 
 // Et au début du composant WaitingRoom
 console.log('WaitingRoom loaded with gameId:', gameId);

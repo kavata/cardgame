@@ -94,6 +94,29 @@ const io = socketIo(server, {
 const gameRoutes = require('./routes/gameRoutes');
 app.use('/jeux', gameRoutes); // Assurez-vous que le chemin correspond à celui que vous utilisez dans le fetch
 
+
+
+
+// Route pour obtenir les participants d'une partie spécifique
+app.get('/games/:gameId/participants', (req, res) => {
+  const gameId = req.params.gameId;
+
+  // Ici, vous devriez implémenter la logique pour récupérer les informations des participants 
+  // de votre base de données ou de votre logique métier. Ci-dessous un exemple de code fictif :
+  
+  // Vérification fictive pour savoir si le jeu existe
+  if (!games.has(gameId)) {
+    return res.status(404).send({ message: "Partie non trouvée" });
+  }
+
+  // Récupération fictive de participants depuis un état de jeu stocké
+  const game = games.get(gameId);
+  const participants = game.getParticipants(); // Cette méthode devrait être implémentée dans votre modèle de jeu
+  
+  res.json(participants);
+});
+
+
 //stocker les etas de jeux
 const Game = require('./models/Game');
 const games = new Map(); // Pour stocker les états des jeux
@@ -110,20 +133,22 @@ io.on('connection', (socket) => {
     socket.join(gameId);
   });
 
-  socket.on('sendMessage', ({ gameId, userId, message }) => {
-  console.log(`Message reçu : ${message} de l'utilisateur ${userId} dans le jeu ${gameId}`);
+// Dans server.js
+socket.on('sendMessage', ({ gameId, userId, message }) => {
+  // Supposons que vous avez une fonction qui récupère un utilisateur par son ID
+  const user = getUserById(userId); // Vous devez implémenter cette fonction
+  const username = user ? user.username : 'Anonyme';
 
-  const query = `INSERT INTO chat_messages (game_id, user_id, message) VALUES (?, ?, ?)`;
-  db.run(query, [gameId, userId, message], function(err) {
-    if (err) {
-      console.error('Erreur lors de l\'enregistrement du message :', err.message);
-    } else {
-      console.log('Message enregistré avec succès');
-    }
-  });
+  const chatMessage = {
+      userId,
+      username, // Ajoutez le nom d'utilisateur ici
+      message
+  };
 
-  io.to(gameId).emit('receiveMessage', { userId, message });
+  // Enregistrez le message dans la base de données si nécessaire, puis
+  io.to(gameId).emit('receiveMessage', chatMessage);
 });
+
 
 
   socket.on('playerAction', ({ gameId, userId, action }) => {

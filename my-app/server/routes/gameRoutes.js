@@ -19,7 +19,7 @@ const io = socketIo(server);
 
 // Route pour obtenir la liste des jeux
 router.get('/', (req, res) => {
-    const query = /*"SELECT * FROM games;"*/"SELECT * FROM jeux"; // Remplacer par votre requête SQL appropriée
+    const query = "SELECT * FROM jeux"; // Remplacer par votre requête SQL appropriée
 
     db.all(query, [], (err, rows) => {
         if (err) {

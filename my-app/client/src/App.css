@@ -8,11 +8,12 @@
   max-width: 800px; /* Ajustez en fonction de la largeur de votre application */
   margin: auto;
   text-align: center;
+  position: relative; /* Pour le positionnement absolu de la chat-box */
 }
 
 /* Style pour les messages */
 .message {
-  margin-bottom: 30px; /* Ajustez l'espace sous le message */
+  margin-bottom: 30px;
   padding: 10px;
   background-color: #f9f9f9;
   border: 1px solid #eaeaea;
@@ -23,9 +24,10 @@
 select,
 input[type="number"] {
   padding: 10px;
-  margin-right: 10px; /* Ajustez l'espace entre les éléments */
+  margin: 0 10px 20px 0;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-size: 16px; /* Taille de police cohérente */
 }
 
 /* Style pour les boutons */
@@ -34,7 +36,7 @@ button {
   color: white;
   border: none;
   padding: 12px 20px;
-  margin-top: 20px; /* Ajustez l'espace au-dessus du bouton */
+  margin-top: 20px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
@@ -75,11 +77,11 @@ input[type="submit"]:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px; /* Espace entre les groupes de formulaires */
+  margin-bottom: 20px;
 }
 
 .form-group > * {
-  margin-right: 10px; /* Espace entre les éléments à l'intérieur d'un groupe de formulaires */
+  margin-right: 10px;
 }
 
 .form-group > *:last-child {
@@ -94,14 +96,17 @@ input[type="submit"]:hover {
 .logout-button:hover {
   background-color: #d32f2f;
 }
+
+/* Styles pour la chat box */
 .chat-box {
   position: fixed;
   bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #f3f3f3;
+  right: 0; /* Positionnement à droite */
+  width: 300px; /* Largeur fixe pour la chat box */
+  background-color: #fff;
   box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
   padding: 10px;
+  border-radius: 8px 8px 0 0; /* Arrondir les coins supérieurs */
 }
 
 .messages {
@@ -113,12 +118,17 @@ input[type="submit"]:hover {
   margin: 5px 0;
 }
 
-input[type="text"] {
-  width: 70%;
-  padding: 5px;
+/* Modification du style pour l'input et le bouton dans la chat-box */
+.chat-box input[type="text"] {
+  width: calc(70% - 20px); /* ajuster la largeur en fonction du padding */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   margin-right: 10px;
 }
 
-button {
-  padding: 5px 10px;
+.chat-box button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 16px; /* Taille de police cohérente */
 }

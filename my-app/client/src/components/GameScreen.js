@@ -21,8 +21,8 @@ function GameScreen({ gameId, userId }) {
         setGameState(state);
       });
 
-      socket.current.on('receiveMessage', (message) => {
-        setMessages(prevMessages => [...prevMessages, message]);
+      socket.current.on('receiveMessage', (chatMessage) => {
+        setMessages(prevMessages => [...prevMessages, chatMessage]);
       });
     }
 
@@ -54,10 +54,22 @@ function GameScreen({ gameId, userId }) {
     socket.current.emit('playerAction', { gameId, userId, action });
   };
 
+  
   return (
     <div className="game-screen">
       {/* Affichage du jeu */}
-      {/* ... */}
+      {gameState && gameState.players.map(player => (
+        <div key={player.id}>
+          <h2>{player.username}'s Hand:</h2>
+          <div className="player-hand">
+            {player.hand.map((card, index) => (
+              <div key={index} className="card">
+                {card.value} of {card.suit}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
 
       {/* Zone de Chat */}
       <div className="chat-box">

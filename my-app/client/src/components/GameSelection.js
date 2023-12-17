@@ -38,39 +38,54 @@ function GameSelection({ onGameSelected }) {
         const clampedValue = Math.min(10, Math.max(2, value));
         setNumberOfPlayers(clampedValue);
     };
-
-    // Gestionnaire d'événement pour la création d'une nouvelle partie
     const handleCreateGame = () => {
-        const newGameInfo = {
-            name: 'Nouvelle Partie',            // Nom de la partie, peut être dynamique
-            numberOfPlayers: numberOfPlayers,  
-            
-            // Nombre de joueurs sélectionné
-            // Vous pouvez ajouter d'autres informations nécessaires pour créer une partie,
-            // telles que l'ID de l'utilisateur qui crée la partie, le type de jeu, etc.
-        };
-        console.log("newGameInfo", newGameInfo);
-        fetch('http://localhost:3001/jeux', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newGameInfo),
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Échec de la création de la partie');
+        // Convertir selectedGameId en Number si nécessaire
+        const gameIdNumber = selectedGameId ? Number(selectedGameId) : null;
+    
+        // Vérifiez si un jeu existant a été sélectionné
+        if (gameIdNumber) {
+            // Trouver le jeu sélectionné par ID
+            const selectedGame = games.find(game => game.id === gameIdNumber);
+            if (selectedGame) {
+                // Un jeu existant a été sélectionné, appeler onGameSelected avec cet ID et le nom
+                onGameSelected(selectedGame.id, selectedGame.name);
+            } else {
+                // Aucun jeu correspondant trouvé, log une erreur
+                console.error('Le jeu sélectionné est introuvable dans la liste des jeux disponibles.');
             }
-            return response.json();
-        })
-        .then(newGame => {
-            console.log('Nouvelle partie créée :', newGame);
-            onGameSelected(newGame.id); // Assurez-vous que cette fonction fait ce que vous attendez
-        })
-        .catch(error => {
-            console.error('Erreur lors de la création de la partie :', error);
-        });
+        } else {
+            // Aucun jeu n'a été sélectionné, créer une nouvelle partie
+            const newGameInfo = {
+                name: 'Nouvelle Partie', // Vous pourriez vouloir permettre à l'utilisateur de définir ce nom
+                numberOfPlayers: numberOfPlayers, // Le nombre de joueurs a été défini par l'utilisateur
+            };
+    
+            // Appel API pour créer une nouvelle partie
+            fetch('http://localhost:3001/jeux', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newGameInfo),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Échec de la création de la partie');
+                }
+                return response.json();
+            })
+            .then(newGame => {
+                // Nouvelle partie créée, utiliser les propriétés retournées par l'API
+                onGameSelected(newGame.id, newGame.name);
+            })
+            .catch(error => {
+                // Gérer les erreurs de la requête API
+                console.error('Erreur lors de la création de la partie :', error);
+            });
+        }
     };
+    
+    
     
      /*   {games.map(game => (
                     <option key={game.id} value={game.id}>{game.name}</option>
