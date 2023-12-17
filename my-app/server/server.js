@@ -10,9 +10,13 @@ const app = express();
 const port = 3001;
 const db = new sqlite3.Database('./mydb.sqlite3');
 
+
 // Middleware pour gérer les requêtes JSON et CORS
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000", // Autoriser les requêtes de cette origine
+  methods: ["GET", "POST"]         // Autoriser ces méthodes
+}));
 
 // Route d'inscription
 app.post('/user/register', async (req, res) => {
@@ -80,12 +84,18 @@ function getUserByUsername(username) {
 }
 // Créez le serveur HTTP après avoir configuré `app`
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"]
+  }
+});
 // Exemple de configuration dans server.js
 const gameRoutes = require('./routes/gameRoutes');
 app.use('/jeux', gameRoutes); // Assurez-vous que le chemin correspond à celui que vous utilisez dans le fetch
 
 //stocker les etas de jeux
+const Game = require('./models/Game');
 const games = new Map(); // Pour stocker les états des jeux
 
 io.on('connection', (socket) => {
@@ -100,6 +110,22 @@ io.on('connection', (socket) => {
     socket.join(gameId);
   });
 
+  socket.on('sendMessage', ({ gameId, userId, message }) => {
+  console.log(`Message reçu : ${message} de l'utilisateur ${userId} dans le jeu ${gameId}`);
+
+  const query = `INSERT INTO chat_messages (game_id, user_id, message) VALUES (?, ?, ?)`;
+  db.run(query, [gameId, userId, message], function(err) {
+    if (err) {
+      console.error('Erreur lors de l\'enregistrement du message :', err.message);
+    } else {
+      console.log('Message enregistré avec succès');
+    }
+  });
+
+  io.to(gameId).emit('receiveMessage', { userId, message });
+});
+
+
   socket.on('playerAction', ({ gameId, userId, action }) => {
     const game = games.get(gameId);
     if (game) {
@@ -110,6 +136,5 @@ io.on('connection', (socket) => {
   });
 });
 
-app.listen(port, () => {
-    console.log(`Serveur démarré sur http://localhost:${port}`);
-});
+const PORT = 3001;
+server.listen(PORT, () => console.log(`Serveur écoutant sur le port ${PORT}`));

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const sqlite3 = require('sqlite3').verbose();
+const socketIo = require('socket.io'); // Ajout de Socket.IO
+
 const gameController = require('../controllers/gameController');
 
 // Création d'une connexion à la base de données
@@ -10,6 +12,10 @@ const db = new sqlite3.Database('./mydb.sqlite3', (err) => {
     }
     console.log('Connected to the SQLite database.');
 });
+
+// Création du serveur Socket.IO
+const server = require('http').createServer();
+const io = socketIo(server);
 
 // Route pour obtenir la liste des jeux
 router.get('/', (req, res) => {
@@ -39,12 +45,26 @@ router.post('/', (req, res) => {
             return;
         }
         // Renvoyer l'ID de la nouvelle partie créée
-        res.status(201).json({ message: "Nouvelle partie créée", gameId: this.lastID });
+        const gameId = this.lastID;
+        res.status(201).json({ message: "Nouvelle partie créée", gameId });
     });
 });
+// Utilisation de Socket.IO pour la création de jeu et le tour de jeu
+io.on('connection', (socket) => {
+    console.log('Nouvelle connexion Socket.IO');
 
-router.post('/create', gameController.createGame);
-router.post('/playTurn', gameController.playTurn);
+    // Lorsqu'un joueur crée un jeu
+    socket.on('createGame', ({ gameId }) => {
+        // Émettre une mise à jour d'état du jeu à tous les clients connectés
+        io.emit('gameState', { gameId, status: 'en attente' });
+    });
+
+    // Lorsqu'un joueur joue un tour
+    socket.on('playTurn', ({ gameId }) => {
+        // Émettre une mise à jour d'état du jeu à tous les clients connectés
+        io.emit('gameState', { gameId, status: 'en cours' });
+    });
+});
 
 
 module.exports = router;

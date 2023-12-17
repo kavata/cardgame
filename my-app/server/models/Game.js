@@ -10,6 +10,22 @@ class Game {
     this.isFinished = false;
     // ... autres propriétés de l'état du jeu
   }
+   // Méthode pour ajouter un joueur à la partie
+   addPlayer(userId) {
+    // Vérifier si le joueur est déjà dans la partie
+    const isPlayerExists = this.players.some(player => player.id === userId);
+    if (!isPlayerExists) {
+      // Ajouter le joueur s'il n'est pas déjà présent
+      this.players.push({ id: userId, hand: [], username: `Player ${userId}` });
+    }
+  }
+
+  // Méthode pour retirer un joueur de la partie
+  removePlayer(userId) {
+    this.players = this.players.filter(player => player.id !== userId);
+    // Vous pouvez ajouter d'autres logiques, comme vérifier si la partie peut continuer
+  }
+
 
   createDeck() {
     const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];

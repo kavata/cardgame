@@ -83,7 +83,9 @@ console.log('WaitingRoom loaded with gameId:', gameId);
     </div>
   );
 }*/
-const renderContent = () => {
+
+
+/*const renderContent = () => {
   switch (currentScreen) {
     case 'login':
       return (
@@ -101,8 +103,27 @@ const renderContent = () => {
       default:
         return <div>Écran inconnu</div>;
   }
-};
+};*/
 
+const renderContent = () => {
+  switch (currentScreen) {
+    case 'login':
+      return (
+        <>
+          <Login onLoginSuccess={handleLoginSuccess} onLoginFailure={handleLoginFailure} />
+          <Registration onRegistrationSuccess={handleRegistrationSuccess} onRegistrationFailure={handleRegistrationFailure} />
+        </>
+      );
+    case 'gameSelection':
+      return <GameSelection onGameSelected={handleGameSelected} />;
+    case 'waitingRoom':
+      return <WaitingRoom gameId={selectedGameId} onStartGame={handleStartGame} />;
+    case 'gameScreen':
+      return <GameScreen userId={user.id} gameId={selectedGameId} />;
+    default:
+      return <div>Écran inconnu</div>;
+  }
+};
 
 
 return (

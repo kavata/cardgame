@@ -3,21 +3,51 @@ import io from 'socket.io-client';
 
 function GameScreen({ gameId, userId }) {
   const [gameState, setGameState] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
   const socket = useRef(null);
+  const messageEndRef = useRef(null);
 
   useEffect(() => {
+    // La configuration de la connexion Socket.IO
+    console.log('Tentative de connexion à : http://localhost:3001');
     socket.current = io('http://localhost:3001');
 
-    socket.current.emit('joinGame', { gameId, userId });
+    // Les événements liés à la connexion Socket.IO
+    if (socket.current) {
+      socket.current.emit('joinGame', { gameId, userId });
 
-    socket.current.on('gameState', (state) => {
-      setGameState(state);
-    });
+      socket.current.on('gameState', (state) => {
+        setGameState(state);
+      });
 
+      socket.current.on('receiveMessage', (message) => {
+        setMessages(prevMessages => [...prevMessages, message]);
+      });
+    }
+
+    // Nettoyage de la connexion lors du démontage du composant
     return () => {
-      socket.current.disconnect();
+      if (socket.current) {
+        socket.current.disconnect();
+      }
     };
   }, [gameId, userId]);
+
+  const handleSendMessage = () => {
+    if (newMessage.trim()) {
+      socket.current.emit('sendMessage', { gameId, userId, message: newMessage });
+      setNewMessage('');
+    }
+  };
+
+  const scrollToBottom = () => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handlePlayerAction = (actionType, additionalData) => {
     const action = { type: actionType, ...additionalData };
@@ -25,32 +55,28 @@ function GameScreen({ gameId, userId }) {
   };
 
   return (
-    <div>
-      <h2>État du Jeu</h2>
-      {gameState ? (
-        <div>
-          <p>Tour actuel : {gameState.currentTurn}</p>
-          {/* Affichage des informations spécifiques au jeu */}
-          {gameState.players.map((player, index) => (
-            <p key={index}>{player.username}: {player.cards.length} cartes</p>
+    <div className="game-screen">
+      {/* Affichage du jeu */}
+      {/* ... */}
+
+      {/* Zone de Chat */}
+      <div className="chat-box">
+        <div className="messages">
+          {messages.map((msg, index) => (
+            <p key={index}><strong>{msg.userId}:</strong> {msg.message}</p>
           ))}
-
-          {/* Interactions possibles pour le joueur */}
-          {gameState.currentTurn === userId && (
-            <div>
-              {/* Exemple d'action : jouer une carte */}
-              <button onClick={() => handlePlayerAction('playCard', { cardId: '123' })}>
-                Jouer une Carte
-              </button>
-            </div>
-          )}
-
-          {/* Autres interactions basées sur le jeu */}
+          <div ref={messageEndRef} />
         </div>
-      ) : (
-        <p>Chargement du jeu...</p>
-      )}
+        <input
+          type="text"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="Tapez votre message ici"
+        />
+        <button onClick={handleSendMessage}>Envoyer</button>
+      </div>
     </div>
   );
 }
+
 export default GameScreen;
