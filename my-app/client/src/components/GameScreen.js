@@ -1,4 +1,37 @@
 // client/src/components/GameScreen.js
+import React, { useState } from 'react';
+
+function GameScreen() {
+    const [gameId, setGameId] = useState(null);
+    const [gameState, setGameState] = useState(null);
+
+    const createGame = async () => {
+        const response = await fetch('http://localhost:3000/game/create', { method: 'POST' });
+        const data = await response.json();
+        setGameId(data.gameId);
+    };
+
+    const playTurn = async () => {
+        const response = await fetch('http://localhost:3000/game/play', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gameId })
+        });
+        const data = await response.json();
+        setGameState(data.gameState);
+    };
+
+    return (
+        <div>
+            <button onClick={createGame}>Start Game</button>
+            <button onClick={playTurn}>Play Turn</button>
+            {/* Affichez ici l'état du jeu */}
+        </div>
+    );
+}
+
+export default GameScreen;
+/* 
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
@@ -31,8 +64,8 @@ function GameScreen({ gameId, userId }) {
       <h2>État du Jeu</h2>
       {gameState ? (
         <div>
-          {/* Affichez ici les détails de gameState */}
-          <p>Informations du jeu...</p>
+        */  {/* Affichez ici les détails de gameState */}
+         /* <p>Informations du jeu...</p>
         </div>
       ) : (
         <p>Chargement du jeu...</p>
@@ -41,4 +74,6 @@ function GameScreen({ gameId, userId }) {
   );
 }
 
-export default GameScreen;
+export default GameScreen; */
+
+

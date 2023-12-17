@@ -20,6 +20,7 @@ db.serialize(() => {
       creator_id INTEGER,
       numberOfPlayers INTEGER,
       status TEXT,
+      gameCode TEXT,
       FOREIGN KEY (creator_id) REFERENCES users (id)
     );
   `);
@@ -56,6 +57,18 @@ db.serialize(() => {
 //       ('Jeu de Cartes 3', 1, 'en attente');
 
   // Ajoutez ici d'autres tables nécessaires pour votre jeu
+  
+  db.run(`
+  CREATE TABLE IF NOT EXISTS chat_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    game_id INTEGER,
+    user_id INTEGER,
+    message TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (game_id) REFERENCES games (id),
+    FOREIGN KEY (user_id) REFERENCES users (id)
+  );
+`);
 
 });
 

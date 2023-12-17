@@ -28,9 +28,38 @@ exports.createGame = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+}; 
+
+ // Stockez les instances de jeu en cours
+let games = {};
+
+exports.createGame = (req, res) => {
+    const newGame = new Game();
+    const gameId = generateUniqueId(); // Implémentez cette fonction pour générer un ID unique
+    games[gameId] = newGame;
+    res.json({ gameId: gameId });
 };
 
-/// Ajouter des joueurs à une partie existante
+exports.playTurn = (req, res) => {
+    const { gameId } = req.body;
+    const game = games[gameId];
+
+    if (game) {
+        game.playTurn();
+        res.json({ gameState: game.getState() }); // Implémentez getState pour obtenir l'état actuel du jeu
+    } else {
+        res.status(404).send('Game not found');
+    }
+};
+
+function generateUniqueId() {
+    // Générez un identifiant unique pour chaque jeu
+    const now = Date.now();
+    const random = Math.floor(Math.random() * 1000000); // Un nombre aléatoire jusqu'à 6 chiffres
+    return `game-${now}-${random}`;
+}
+// 
+/* Ajouter des joueurs à une partie existante
 exports.joinGame = async (req, res) => {
   try {
     const { userId, gameId } = req.body;
@@ -54,7 +83,7 @@ exports.joinGame = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
+*/
 // Gérer l'abandon d'un joueur
 exports.leaveGame = async (req, res) => {
   try {

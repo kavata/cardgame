@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const sqlite3 = require('sqlite3').verbose();
+const gameController = require('../controllers/gameController');
 
 // Création d'une connexion à la base de données
 const db = new sqlite3.Database('./mydb.sqlite3', (err) => {
@@ -41,6 +42,9 @@ router.post('/', (req, res) => {
         res.status(201).json({ message: "Nouvelle partie créée", gameId: this.lastID });
     });
 });
+
+router.post('/create', gameController.createGame);
+router.post('/playTurn', gameController.playTurn);
 
 
 module.exports = router;

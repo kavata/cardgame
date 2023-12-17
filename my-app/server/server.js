@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const socketIo = require('socket.io');
 const bcrypt = require('bcrypt'); // Assurez-vous d'installer bcrypt avec 'npm install bcrypt'
 const sqlite3 = require('sqlite3').verbose(); // Assurez-vous d'installer sqlite3 avec 'npm install sqlite3'
 

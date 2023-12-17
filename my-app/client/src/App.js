@@ -11,6 +11,7 @@ function App() {
   const [message, setMessage] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentScreen, setCurrentScreen] = useState('login'); // Nouvel état pour gérer l'écran actuel
+  
 
   useEffect(() => {
     // Vérifier si l'utilisateur est déjà connecté (par exemple, via un token stocké localement)
@@ -51,6 +52,9 @@ function App() {
     // Supprimer le token local ou les données de session si nécessaire
   };
 
+ const handleStartGame = () => {
+    setCurrentScreen('gameScreen');
+  };
   /*const renderContent = () => {
     if (!isAuthenticated) {
       return (
@@ -85,14 +89,16 @@ const renderContent = () => {
       );
     case 'gameSelection':
       return <GameSelection onGameSelected={handleGameSelected} />;
-    case 'waitingRoom':
-      return <WaitingRoom gameId={selectedGameId} />;
-    case 'gameScreen':
-      return <GameScreen userId={user.id} gameId={selectedGameId} />;
-    default:
-      return <div>Écran inconnu</div>;
+      case 'waitingRoom':
+        return <WaitingRoom gameId={selectedGameId} onStartGame={handleStartGame} />;
+      case 'gameScreen':
+        return <GameScreen userId={user.id} gameId={selectedGameId} />;
+      default:
+        return <div>Écran inconnu</div>;
   }
 };
+
+
 
 return (
   <div className="App">

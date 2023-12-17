@@ -4,6 +4,8 @@ function GameSelection({ onGameSelected }) {
     const [games, setGames] = useState([]);
     const [selectedGameId, setSelectedGameId] = useState('');
     const [numberOfPlayers, setNumberOfPlayers] = useState(2); // Par défaut, 2 joueurs
+    const [gameCode, setGameCode] = useState('');
+
 
     // Effet de chargement des jeux au montage du composant
     useEffect(() => {
@@ -41,7 +43,9 @@ function GameSelection({ onGameSelected }) {
     const handleCreateGame = () => {
         const newGameInfo = {
             name: 'Nouvelle Partie',            // Nom de la partie, peut être dynamique
-            numberOfPlayers: numberOfPlayers,   // Nombre de joueurs sélectionné
+            numberOfPlayers: numberOfPlayers,  
+            
+            // Nombre de joueurs sélectionné
             // Vous pouvez ajouter d'autres informations nécessaires pour créer une partie,
             // telles que l'ID de l'utilisateur qui crée la partie, le type de jeu, etc.
         };
