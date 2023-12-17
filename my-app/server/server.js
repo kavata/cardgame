@@ -1,8 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const socketIo = require('socket.io');
-const bcrypt = require('bcrypt'); // Assurez-vous d'installer bcrypt avec 'npm install bcrypt'
-const sqlite3 = require('sqlite3').verbose(); // Assurez-vous d'installer sqlite3 avec 'npm install sqlite3'
+const bcrypt = require('bcrypt');
+const sqlite3 = require('sqlite3').verbose();
+const http = require('http'); // Assurez-vous d'importer le module http
+
 
 const app = express();
 const port = 3001;
@@ -76,10 +78,37 @@ function getUserByUsername(username) {
         });
     });
 }
-
+// Créez le serveur HTTP après avoir configuré `app`
+const server = http.createServer(app);
+const io = socketIo(server);
 // Exemple de configuration dans server.js
 const gameRoutes = require('./routes/gameRoutes');
 app.use('/jeux', gameRoutes); // Assurez-vous que le chemin correspond à celui que vous utilisez dans le fetch
+
+//stocker les etas de jeux
+const games = new Map(); // Pour stocker les états des jeux
+
+io.on('connection', (socket) => {
+  console.log('Nouvelle connexion Socket.io');
+
+  socket.on('joinGame', ({ gameId, userId }) => {
+    if (!games.has(gameId)) {
+      games.set(gameId, new Game());
+    }
+    const game = games.get(gameId);
+    game.addPlayer(userId);
+    socket.join(gameId);
+  });
+
+  socket.on('playerAction', ({ gameId, userId, action }) => {
+    const game = games.get(gameId);
+    if (game) {
+      // Traitement de l'action du joueur
+      game.playTurn(userId, action);
+      io.to(gameId).emit('gameState', game.getState());
+    }
+  });
+});
 
 app.listen(port, () => {
     console.log(`Serveur démarré sur http://localhost:${port}`);
