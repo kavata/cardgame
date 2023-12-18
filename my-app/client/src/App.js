@@ -19,8 +19,17 @@ function App() {
   }, []);
 
   const handleLoginSuccess = (userData) => {
+    // userData doit contenir un attribut 'userId' envoyé par le serveur après une connexion réussie
+    const { userId } = userData;
+  
+    // Stockage de userId dans localStorage pour un accès global et persistant
+    localStorage.setItem('userId', userId);
+  
+    // Mise à jour de l'état avec les informations de l'utilisateur et l'authentification
     setUser(userData);
     setIsAuthenticated(true);
+    
+    // Navigate to the game selection screen
     setCurrentScreen('gameSelection'); // Changement d'écran après connexion
     setMessage("Bienvenue sur votre espace de jeu !");
   };

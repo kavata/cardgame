@@ -49,7 +49,15 @@ class Game {
     }
     return deck;
   }
-
+    
+  // // Method to get the list of participants
+   getParticipants() {
+  //   // Return a list of player usernames or other identifying information
+    return this.players.map(player => {
+       return { id: player.id, username: player.username };
+    });
+   }
+  
  // Méthode pour distribuer les cartes aux joueurs
  dealCards(numberOfPlayers) {
   if (numberOfPlayers < 2 || numberOfPlayers > 10) {
@@ -73,6 +81,20 @@ class Game {
   }
 
   this.isStarted = true;
+}
+getState() {
+  return {
+    players: this.players.map(player => ({
+      id: player.id,
+      username: player.username,
+      hand: player.hand // Assurez-vous de ne pas divulguer des informations sensibles
+    })),
+    currentTurn: this.currentTurn,
+    chatHistory: this.chatHistory,
+    isStarted: this.isStarted,
+    isFinished: this.isFinished
+    // Ajoutez ici d'autres propriétés que vous souhaitez partager avec le client
+  };
 }
   // Méthode pour démarrer le jeu
   startGame(playerIds) {

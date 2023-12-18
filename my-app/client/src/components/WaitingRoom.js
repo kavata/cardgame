@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function WaitingRoom({ gameId, onStartGame }) {
-    const [participants, setParticipants] = useState([]);
+function WaitingRoom({ gameId, gameCode, onStartGame }) {
     const [error, setError] = useState('');
 
     useEffect(() => {
@@ -15,7 +14,11 @@ function WaitingRoom({ gameId, onStartGame }) {
                     }
                     return response.json();
                 })
-                .then(data => setParticipants(data))
+                .then(data => {
+                    // Vous n'avez pas besoin de définir les participants dans le state ici
+                    // si vous ne souhaitez pas les afficher dans le rendu
+                    // setParticipants(data);
+                })
                 .catch(error => {
                     console.error('Erreur lors du chargement des participants:', error);
                     setError('Erreur lors du chargement des participants');
@@ -28,12 +31,11 @@ function WaitingRoom({ gameId, onStartGame }) {
     return (
         <div>
             <h2>Salle d'attente pour la partie {gameId}</h2>
+            {/* Afficher le code de jeu si disponible */}
+            {gameCode && <h3>Code de la Partie : {gameCode}</h3>}
+
             {error && <p>Erreur : {error}</p>}
-            <ul>
-                {participants.map(participant => (
-                    <li key={participant.id}>{participant.name}</li>
-                ))}
-            </ul>
+            {/* Ne pas afficher la liste des participants */}
             <button onClick={onStartGame}>Commencer le Jeu</button>
         </div>
     );

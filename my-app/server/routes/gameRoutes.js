@@ -4,6 +4,7 @@ const sqlite3 = require('sqlite3').verbose();
 const socketIo = require('socket.io'); // Ajout de Socket.IO
 
 const gameController = require('../controllers/gameController');
+const activeGames = {};
 
 // Création d'une connexion à la base de données
 const db = new sqlite3.Database('./mydb.sqlite3', (err) => {
@@ -53,18 +54,43 @@ router.post('/', (req, res) => {
 io.on('connection', (socket) => {
     console.log('Nouvelle connexion Socket.IO');
 
-    // Lorsqu'un joueur crée un jeu
-    socket.on('createGame', ({ gameId }) => {
-        // Émettre une mise à jour d'état du jeu à tous les clients connectés
-        io.emit('gameState', { gameId, status: 'en attente' });
+    // Create a new game
+    socket.on('createGame', () => {
+        const newGame = new Game();
+        const gameId = generateUniqueId();
+        activeGames[gameId] = newGame;
+        socket.join(gameId);
+        io.to(gameId).emit('gameState', newGame.getState()); // Ensure you have a getState method in Game class
     });
 
-    // Lorsqu'un joueur joue un tour
-    socket.on('playTurn', ({ gameId }) => {
-        // Émettre une mise à jour d'état du jeu à tous les clients connectés
-        io.emit('gameState', { gameId, status: 'en cours' });
+    // Add a player to a game
+    socket.on('joinGame', ({ gameId, userId }) => {
+        if (activeGames[gameId]) {
+            activeGames[gameId].addPlayer(userId);
+            io.to(gameId).emit('gameState', activeGames[gameId].getState());
+        }
     });
+
+    // Handle a player's turn
+    socket.on('playTurn', ({ gameId, userId, action }) => {
+        const game = activeGames[gameId];
+        if (game) {
+            try {
+                game.playTurn(userId, action);
+                io.to(gameId).emit('gameState', game.getState());
+            } catch (error) {
+                socket.emit('gameError', error.message);
+            }
+        }
+    });
+
+    // ... more event handlers as needed
 });
+
+// Helper function to generate unique ID for games
+function generateUniqueId() {
+    return 'game-' + Math.random().toString(36).substr(2, 9);
+}
 
 
 module.exports = router;
