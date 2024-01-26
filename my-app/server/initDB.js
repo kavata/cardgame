@@ -69,6 +69,48 @@ db.serialize(() => {
     FOREIGN KEY (user_id) REFERENCES users (id)
   );
 `);
+// Table pour les cartes
+db.run(`
+CREATE TABLE IF NOT EXISTS cards (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  value INTEGER NOT NULL,
+  bullHeads INTEGER NOT NULL
+);
+`);
+
+// Table pour les joueurs dans une partie
+db.run(`
+CREATE TABLE IF NOT EXISTS game_players (
+  game_id INTEGER,
+  user_id INTEGER,
+  PRIMARY KEY (game_id, user_id),
+  FOREIGN KEY (game_id) REFERENCES games (id),
+  FOREIGN KEY (user_id) REFERENCES users (id)
+);
+`);
+
+// Table pour les manches du jeu
+db.run(`
+CREATE TABLE IF NOT EXISTS rounds (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  game_id INTEGER,
+  winner_user_id INTEGER,
+  FOREIGN KEY (game_id) REFERENCES games (id),
+  FOREIGN KEY (winner_user_id) REFERENCES users (id)
+);
+`);
+
+// Table pour enregistrer les cartes jouées pendant une manche
+db.run(`
+CREATE TABLE IF NOT EXISTS played_cards (
+  round_id INTEGER,
+  user_id INTEGER,
+  card_id INTEGER,
+  FOREIGN KEY (round_id) REFERENCES rounds (id),
+  FOREIGN KEY (user_id) REFERENCES users (id),
+  FOREIGN KEY (card_id) REFERENCES cards (id)
+);
+`);
 
 });
 
