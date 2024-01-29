@@ -100,11 +100,26 @@ socket.on('createGame', (newGameInfo, userId, username) => {
         }, 1000);
   });
    
+   socket.on('ramdomCards', (ramDomCards)=>{
+    
+      console.log(ramDomCards)
+        socket.emit('ramdomCardsUpdated', ramDomCards )
+   
+
+   })
+
+
   socket.on('joinGame', (gameId, userId , username) => {
-    console.log(username+'   a rejoint le jeu', gamesData.get(gameId))
+
+   if (gamesData.get(gameId) && gamesData.get(gameId).participants.length < gamesData.get(gameId).numberOfPlayers) {
+     console.log(username+'   a rejoint le jeu', gamesData.get(gameId))
     gamesData.get(gameId).participants.push(username)
     console.log("L'état dujeu", gamesData.get(gameId))
     io.emit('gameCreated', gamesData.get(userId));
+   }else {
+    // Si le jeu n'existe pas ou a atteint le nombre maximum de joueurs, émettez un message d'erreur
+    socket.emit('gameError', { message: 'Impossible de rejoindre le jeu. Le jeu est complet ou n\'existe pas.' });
+  }
 
     /*if (!games.has(gameId)) {
       const game = new Game();
@@ -115,6 +130,22 @@ socket.on('createGame', (newGameInfo, userId, username) => {
     socket.join(gameId);
     io.to(gameId).emit('gameState', game.getState()); // Assurez-vous que Game a une méthode getState()*/
   });
+
+  const userData = [];
+  
+  socket.on('setCard', (data) => {
+  
+      // L'utilisateur n'a pas encore envoyé de données, ajoutez-les au tableau
+      userData.push(data);
+      console.log('Données stockées côté serveur :', userData);
+
+     setInterval(() => {
+       io.emit('cardsPlayed', userData);
+     }, 1000);
+  
+  });
+
+
 
   socket.on('playerAction', ({ gameId, userId, action }) => {
     const game = games.get(gameId);

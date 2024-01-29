@@ -135,8 +135,17 @@ function GameSelection({ onGameSelected }) {
              const userId = localStorage.getItem('userId')
              const username= localStorage.getItem('username')
              socket.emit("joinGame" , gameId , userId , username)
-        
-             onGameSelected(gameId, gameId , numberOfPlayers);
+                 onGameSelected(gameId, gameId , numberOfPlayers);
+
+                socket.on('gameError', (error) => {
+              if (error) {
+                alert(error.message)
+                return false
+              }else{
+                onGameSelected(gameId, gameId , numberOfPlayers);
+
+              }
+            });
            }}>Rejoindre un jeux</button>
 
         </div>
