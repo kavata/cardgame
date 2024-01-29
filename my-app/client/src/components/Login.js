@@ -16,6 +16,7 @@ function Login({ onLoginSuccess, onLoginFailure }) {
             const data = await response.json();
             if (response.ok) {
                 onLoginSuccess(data);
+                localStorage.setItem('username',username );
             } else {
                 onLoginFailure(data.message);
             }

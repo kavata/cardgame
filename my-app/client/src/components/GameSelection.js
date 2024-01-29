@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
+    const socket = io('http://localhost:3001');
 
 function GameSelection({ onGameSelected }) {
     const [games, setGames] = useState([]);
@@ -38,6 +40,8 @@ function GameSelection({ onGameSelected }) {
         const clampedValue = Math.min(10, Math.max(2, value));
         setNumberOfPlayers(clampedValue);
     };
+
+
     const handleCreateGame = () => {
         // Convertir selectedGameId en Number si nécessaire
         const gameIdNumber = selectedGameId ? Number(selectedGameId) : null;
@@ -48,7 +52,12 @@ function GameSelection({ onGameSelected }) {
             const selectedGame = games.find(game => game.id === gameIdNumber);
             if (selectedGame) {
                 // Un jeu existant a été sélectionné, appeler onGameSelected avec cet ID et le nom
-                onGameSelected(selectedGame.id, selectedGame.name);
+                onGameSelected(selectedGame.id, selectedGame.name , numberOfPlayers);
+                const userId = localStorage.getItem('userId')
+                const username = localStorage.getItem('username')
+
+                 socket.emit('createGame', {gameId:selectedGame.id , gameName: selectedGame.name, numberOfPlayers: numberOfPlayers },userId ,username);
+
             } else {
                 // Aucun jeu correspondant trouvé, log une erreur
                 console.error('Le jeu sélectionné est introuvable dans la liste des jeux disponibles.');
@@ -60,6 +69,13 @@ function GameSelection({ onGameSelected }) {
                 numberOfPlayers: numberOfPlayers, // Le nombre de joueurs a été défini par l'utilisateur
             };
     
+               
+    // Écoutez la réponse du serveur si nécessaire
+    socket.on('gameCreated', (newGameData) => {
+
+        onGameSelected(newGameData.id, newGameData.name);
+        socket.disconnect();
+    });
             // Appel API pour créer une nouvelle partie
             fetch('http://localhost:3001/jeux', {
                 method: 'POST',
@@ -77,6 +93,7 @@ function GameSelection({ onGameSelected }) {
             .then(newGame => {
                 // Nouvelle partie créée, utiliser les propriétés retournées par l'API
                 onGameSelected(newGame.id, newGame.name);
+                 
             })
             .catch(error => {
                 // Gérer les erreurs de la requête API
@@ -87,10 +104,7 @@ function GameSelection({ onGameSelected }) {
     
     
     
-     /*   {games.map(game => (
-                    <option key={game.id} value={game.id}>{game.name}</option>
-                ))}
-            </select>*/
+   
     return (
         <div>
             {/* Sélecteur de jeux existants */}
@@ -115,6 +129,16 @@ function GameSelection({ onGameSelected }) {
 
             {/* Bouton pour créer une nouvelle partie */}
             <button onClick={handleCreateGame}>Créer une partie</button>
+
+           <button onClick={()=>{
+             const gameId = prompt("Entrez l'id du jeu")
+             const userId = localStorage.getItem('userId')
+             const username= localStorage.getItem('username')
+             socket.emit("joinGame" , gameId , userId , username)
+        
+             onGameSelected(gameId, gameId , numberOfPlayers);
+           }}>Rejoindre un jeux</button>
+
         </div>
     );
     

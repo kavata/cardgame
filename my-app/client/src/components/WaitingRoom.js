@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
+ const socket = io('http://localhost:3001');
 
 function WaitingRoom({ gameId, gameCode, onStartGame }) {
     const [error, setError] = useState('');
-
+    const [gamers, setGamers] = useState([])
+    const [curentgameCode , setCurentgameCode] =useState()
     useEffect(() => {
+       socket.on('gameCreated' , (gameCreated)=>{
+        console.log('jeux' , gameCreated)
+            if(gameCreated){
+                setGamers(gameCreated.participants)
+                console.log(gameCreated.participants)
+                setCurentgameCode(gameCreated.id)
+            }
+       })
         // Vérifier si gameId est défini
         if (gameId) {
             fetch(`http://localhost:3001/games/${gameId}/participants`)
@@ -30,9 +41,9 @@ function WaitingRoom({ gameId, gameCode, onStartGame }) {
 
     return (
         <div>
-            <h2>Salle d'attente pour la partie {gameId}</h2>
+            <h2>Salle d'attente pour la partie {curentgameCode}</h2>
             {/* Afficher le code de jeu si disponible */}
-            {gameCode && <h3>Code de la Partie : {gameCode}</h3>}
+            {curentgameCode!==undefined && <h3>Code de la Partie : {curentgameCode}</h3>}
 
             {error && <p>Erreur : {error}</p>}
             {/* Ne pas afficher la liste des participants */}

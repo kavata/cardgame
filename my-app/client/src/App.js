@@ -5,6 +5,7 @@ import Registration from './components/Registration';
 import GameScreen from './components/GameScreen';
 import GameSelection from './components/GameSelection';
 import WaitingRoom from './components/WaitingRoom';
+import GameSpace from './components/GameSpace';
 function App() {
   const [user, setUser] = useState(null);
   const [selectedGameId, setSelectedGameId] = useState(null);
@@ -24,7 +25,7 @@ function App() {
   
     // Stockage de userId dans localStorage pour un accès global et persistant
     localStorage.setItem('userId', userId);
-  
+    console.log(userData)
     // Mise à jour de l'état avec les informations de l'utilisateur et l'authentification
     setUser(userData);
     setIsAuthenticated(true);
@@ -128,7 +129,7 @@ const renderContent = () => {
     case 'waitingRoom':
       return <WaitingRoom gameId={selectedGameId} onStartGame={handleStartGame} />;
     case 'gameScreen':
-      return <GameScreen userId={user.id} gameId={selectedGameId} />;
+      return <GameSpace userId={user.id} gameId={selectedGameId} />;
     default:
       return <div>Écran inconnu</div>;
   }

@@ -53,15 +53,17 @@ router.post('/', (req, res) => {
 // Utilisation de Socket.IO pour la création de jeu et le tour de jeu
 io.on('connection', (socket) => {
     console.log('Nouvelle connexion Socket.IO');
+    
+
 
     // Create a new game
-    socket.on('createGame', () => {
+   /* socket.on('createGame', () => {
         const newGame = new Game();
         const gameId = generateUniqueId();
         activeGames[gameId] = newGame;
         socket.join(gameId);
         io.to(gameId).emit('gameState', newGame.getState()); // Ensure you have a getState method in Game class
-    });
+    });*/
 
     // Add a player to a game
     socket.on('joinGame', ({ gameId, userId }) => {

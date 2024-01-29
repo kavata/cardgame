@@ -78,19 +78,42 @@ const gameRoutes = require('./routes/gameRoutes'); // Assurez-vous que le chemin
 app.use('/jeux', gameRoutes);
 
 const games = new Map(); 
-
+const gamesData = new Map();
+const allGames = {}
 io.on('connection', (socket) => {
   console.log('Nouvelle connexion Socket.io');
+socket.on('createGame', (newGameInfo, userId, username) => {
+        // Stockez les informations du jeu dans la Map
+        const userGameKey =  userId
 
-  socket.on('joinGame', ({ gameId, userId }) => {
-    if (!games.has(gameId)) {
+        gamesData.set(userId, {
+            id: newGameInfo.gameId,
+            master: userId,
+            name: newGameInfo.gameName,
+            numberOfPlayers: newGameInfo.numberOfPlayers,
+            participants: [username], // Vous pouvez ajouter les participants ici
+        });
+       console.log(gamesData)
+        // Émettez un événement pour informer les clients du jeu créé
+        setInterval(() => {
+          io.emit('gameCreated', gamesData.get(userId));
+        }, 1000);
+  });
+   
+  socket.on('joinGame', (gameId, userId , username) => {
+    console.log(username+'   a rejoint le jeu', gamesData.get(gameId))
+    gamesData.get(gameId).participants.push(username)
+    console.log("L'état dujeu", gamesData.get(gameId))
+    io.emit('gameCreated', gamesData.get(userId));
+
+    /*if (!games.has(gameId)) {
       const game = new Game();
       games.set(gameId, game);
     }
     const game = games.get(gameId);
     game.addPlayer(userId);
     socket.join(gameId);
-    io.to(gameId).emit('gameState', game.getState()); // Assurez-vous que Game a une méthode getState()
+    io.to(gameId).emit('gameState', game.getState()); // Assurez-vous que Game a une méthode getState()*/
   });
 
   socket.on('playerAction', ({ gameId, userId, action }) => {
