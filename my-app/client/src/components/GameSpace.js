@@ -1,22 +1,34 @@
 import { Group, SportsEsports } from '@mui/icons-material';
-import { Avatar, Box, Card, Grid, List, ListItem, ListItemAvatar, ListItemText, Button, Slide, Typography } from '@mui/material';
+import { Avatar, Box, Card, Grid, List, ListItem, ListItemAvatar, ListItemText, Button, Slide, Typography, Fab } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import GameTable from './Table';
 import { io } from 'socket.io-client';
 import  {distributeCards} from './data/distributeCards'
-
-
+import {ref , onValue , push} from 'firebase/database'
+import { db } from '../rtdb/config'
+import Chat from './Chat';
+import { AddComment } from '@material-ui/icons';
 
  const socket = io('http://localhost:3001');
 const gamersNum = localStorage.getItem('size')
 
 
 function GameSpace(props) {
-    const [ open , setOpen] = useState(true)
+    const [ open , setOpen] = useState(false)
     const[ game, setGame] = useState(null)
     const [gamers , setGamers] = useState([])
     const [ramdomCards , setRamdomCards] = useState([])
     const [myCards, setMyCards] = useState([])
+
+     const playCard = (card)=>{
+      const username = localStorage.getItem('username')
+       const dataRef = ref(db , 'cardsPlayed')
+       const data = {
+         card: card,
+         gamer: username
+       }
+       push(dataRef , data)
+     }
     useEffect(() => {
     const fetchData = async () => {
       socket.on('ramdomCardsUpdated', (ramdomCardsUpdated) => {
@@ -107,10 +119,7 @@ function GameSpace(props) {
                   return(
                      <ListItem title={card}>
                         <Button onClick={()=>{
-                           socket.emit('setCard',{
-                              card: card, 
-                              gamer: localStorage.getItem('username')
-                           })
+                           playCard(card)
                         }}>
                            {card}
                         </Button>
@@ -121,7 +130,24 @@ function GameSpace(props) {
          </List>
       </Card>
    </Grid>
- </Grid>       
+ </Grid>    
+  
+   <Box sx={{ position: 'fixed', top: '90%', right: '10%', zIndex: 3 }}>
+              <Fab
+                color="primary"
+                aria-label="add"
+                onClick={() => {
+                   setOpen(true)
+                }}
+              >
+                <AddComment />
+              </Fab>
+            </Box>
+      {
+         open &&(
+             <Chat />
+         )
+      }   
      </Box>
     ); 
    }
